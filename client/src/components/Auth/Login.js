@@ -43,6 +43,7 @@ const Login = ({ classes }) => {
         Welcome
       </Typography>
       <GoogleLogin
+        buttonText="Login with Google"
         isSignedIn={true}
         onSuccess={onSuccess}
         onFailure={onFailure}

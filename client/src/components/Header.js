@@ -1,15 +1,48 @@
-import React from "react";
+import React, { useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
-// import AppBar from "@material-ui/core/AppBar";
-// import Toolbar from "@material-ui/core/Toolbar";
-// import Map from "@material-ui/icons/Map";
-// import Typography from "@material-ui/core/Typography";
+import Context from "../context/context";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import Map from "@material-ui/icons/Map";
+import Typography from "@material-ui/core/Typography";
 
 const Header = ({ classes }) => {
-  return <div>Header</div>;
+  const {
+    state: { currentUser }
+  } = useContext(Context);
+
+  return (
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <div className={classes.grow}>
+            <Map className={classes.icon} />
+            <Typography component="h1" variant="h6" color="inherit" noWrap>
+              GeoPins
+            </Typography>
+          </div>
+          {/*Current User*/}
+          {currentUser && (
+            <div className={classes.grow}>
+              <img
+                src={currentUser.picture}
+                alt="Image"
+                className={classes.picture}
+              />
+              <Typography variant="h5" color="inherit" noWrap>
+                {currentUser.name}
+              </Typography>
+            </div>
+          )}
+
+          {/*Sign up Button*/}
+        </Toolbar>
+      </AppBar>
+    </div>
+  );
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
     flexGrow: 1
   },
