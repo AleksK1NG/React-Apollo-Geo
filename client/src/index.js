@@ -14,7 +14,6 @@ const Root = () => {
   const initialState = useContext(Context);
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log("State from index => ", state);
 
   return (
     <Router>
