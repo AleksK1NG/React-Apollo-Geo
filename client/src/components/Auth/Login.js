@@ -4,7 +4,7 @@ import { GoogleLogin } from "react-google-login";
 
 import { withStyles } from "@material-ui/core/styles";
 import Context from "../../context/context";
-import { LOGIN_USER } from "../../actions-types/actions-types";
+import { IS_LOGGED_IN, LOGIN_USER } from "../../actions-types/actions-types";
 import Typography from "@material-ui/core/Typography";
 import { ME_QUERY } from "../../graphql/queries";
 
@@ -19,7 +19,9 @@ const Login = ({ classes }) => {
       });
 
       const { me } = await client.request(ME_QUERY);
+
       dispatch({ type: LOGIN_USER, payload: me });
+      dispatch({ type: IS_LOGGED_IN, payload: googleUser.isSignedIn() });
     } catch (error) {
       onFailure(error);
     }

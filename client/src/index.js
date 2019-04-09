@@ -9,6 +9,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import * as serviceWorker from "./serviceWorker";
 import Context from "./context/context";
 import reducer from "./reducer/reducer";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 const Root = () => {
   const initialState = useContext(Context);
@@ -19,7 +20,7 @@ const Root = () => {
     <Router>
       <Context.Provider value={{ state, dispatch }}>
         <Switch>
-          <Route exact path="/" component={App} />
+          <ProtectedRoute exact path="/" component={App} />
           <Route path="/login" component={Splash} />
         </Switch>
       </Context.Provider>
