@@ -5,6 +5,7 @@ import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Map from "@material-ui/icons/Map";
 import Typography from "@material-ui/core/Typography";
+import Signout from "./Auth/Signout";
 
 const Header = ({ classes }) => {
   const {
@@ -35,7 +36,8 @@ const Header = ({ classes }) => {
             </div>
           )}
 
-          {/*Sign up Button*/}
+
+          <Signout/>
         </Toolbar>
       </AppBar>
     </div>
