@@ -9,12 +9,32 @@ import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import Context from "../../context/context";
 import { DELETE_DRAFT } from "../../actions-types/actions-types";
+import axios from "axios";
 
 const CreatePin = ({ classes }) => {
   const { dispatch } = useContext(Context);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
+
+  const handleImageUpload = async () => {
+    const formData = new FormData();
+
+    formData.append("file", image);
+    formData.append("upload_preset", "geopins");
+    formData.append("cloud_name", "dxumnbnoe");
+
+    try {
+      const { data } = await axios.post(
+        "https://api.cloudinary.com/v1_1/dxumnbnoe/image/upload",
+        formData
+      );
+      debugger;
+      return data.url;
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDeleteDraft = () => {
     setTitle("");
@@ -23,10 +43,16 @@ const CreatePin = ({ classes }) => {
     dispatch({ type: DELETE_DRAFT });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log({ title, image, content });
+    try {
+      const url = await handleImageUpload();
+      debugger;
+      console.log({ title, image, content, url });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
