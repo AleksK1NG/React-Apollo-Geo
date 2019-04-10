@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { GraphQLClient } from "graphql-request";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -10,12 +11,14 @@ import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import Context from "../../context/context";
 import { DELETE_DRAFT } from "../../actions-types/actions-types";
 import axios from "axios";
+import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 
 const CreatePin = ({ classes }) => {
-  const { dispatch } = useContext(Context);
+  const { state, dispatch } = useContext(Context);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleImageUpload = async () => {
     const formData = new FormData();
@@ -29,7 +32,6 @@ const CreatePin = ({ classes }) => {
         "https://api.cloudinary.com/v1_1/dxumnbnoe/image/upload",
         formData
       );
-      debugger;
       return data.url;
     } catch (error) {
       console.error(error);
@@ -44,13 +46,37 @@ const CreatePin = ({ classes }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
     try {
+      e.preventDefault();
+      setSubmitting(true);
+      const idToken = window.gapi.auth2
+        .getAuthInstance()
+        .currentUser.get()
+        .getAuthResponse().id_token;
+
+      const client = new GraphQLClient("http://localhost:4000/graphql", {
+        headers: { authorization: idToken }
+      });
+
       const url = await handleImageUpload();
-      debugger;
-      console.log({ title, image, content, url });
+      const variables = {
+        title,
+        image: url,
+        content,
+        longitude: state.draft.longitude,
+        latitude: state.draft.latitude
+      };
+
+      const { createPin } = await client.request(
+        CREATE_PIN_MUTATION,
+        variables
+      );
+
+      console.log("create Pin => ", createPin);
+      debugger
+      handleDeleteDraft();
     } catch (error) {
+      setSubmitting(false);
       console.error(error);
     }
   };
@@ -115,7 +141,7 @@ const CreatePin = ({ classes }) => {
 
         <Button
           onClick={handleSubmit}
-          disabled={!title.trim() || !content.trim() || !image}
+          disabled={!title.trim() || !content.trim() || !image || submitting}
           type="submit"
           className={classes.button}
           variant="contained"
