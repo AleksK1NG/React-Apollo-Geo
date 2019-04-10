@@ -1,5 +1,6 @@
 import {
   CREATE_DRAFT,
+  DELETE_DRAFT,
   IS_LOGGED_IN,
   LOGIN_USER,
   SIGNOUT_USER,
@@ -20,6 +21,8 @@ export default function reducer(state, action) {
       return { ...state, draft: { latitude: 0, longitude: 0 } };
     case UPDATE_DRAFT_LOCATION:
       return { ...state, draft: payload };
+    case DELETE_DRAFT:
+      return { ...state, draft: null };
 
     default:
       return state;

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -7,11 +7,21 @@ import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
+import Context from "../../context/context";
+import { DELETE_DRAFT } from "../../actions-types/actions-types";
 
 const CreatePin = ({ classes }) => {
+  const { dispatch } = useContext(Context);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
+
+  const handleDeleteDraft = () => {
+    setTitle("");
+    setContent("");
+    setImage("");
+    dispatch({ type: DELETE_DRAFT });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,7 +77,12 @@ const CreatePin = ({ classes }) => {
         />
       </div>
       <div>
-        <Button className={classes.button} variant="contained" color="primary">
+        <Button
+          onClick={handleDeleteDraft}
+          className={classes.button}
+          variant="contained"
+          color="primary"
+        >
           <ClearIcon className={classes.leftIcon} />
           Cancel
         </Button>
