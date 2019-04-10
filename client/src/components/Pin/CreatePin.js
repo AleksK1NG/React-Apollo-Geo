@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -9,6 +9,16 @@ import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 
 const CreatePin = ({ classes }) => {
+  const [title, setTitle] = useState("");
+  const [image, setImage] = useState("");
+  const [content, setContent] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log({ title, image, content });
+  };
+
   return (
     <form className={classes.form}>
       <Typography
@@ -19,22 +29,35 @@ const CreatePin = ({ classes }) => {
       >
         <LandscapeIcon className={classes.iconLarge} />
       </Typography>
+
       <div>
-        <TextField name="title" label="Title" placeholder="Enter title" />
+        <TextField
+          onChange={(e) => setTitle(e.target.value)}
+          name="title"
+          label="Title"
+          placeholder="Enter title"
+        />
         <input
+          onChange={(e) => setImage(e.target.files[0])}
           accept="image/*"
           id="image"
           type="file"
           className={classes.input}
         />
         <label htmlFor="image">
-          <Button component="span" size="small" className={classes.button}>
+          <Button
+            style={{ color: image && "green" }}
+            component="span"
+            size="small"
+            className={classes.button}
+          >
             <AddAPhotoIcon />
           </Button>
         </label>
       </div>
       <div className={classes.contentField}>
         <TextField
+          onChange={(e) => setContent(e.target.value)}
           name="content"
           label="Content"
           rows="6"
@@ -48,7 +71,10 @@ const CreatePin = ({ classes }) => {
           <ClearIcon className={classes.leftIcon} />
           Cancel
         </Button>
+
         <Button
+          onClick={handleSubmit}
+          disabled={!title.trim() || !content.trim() || !image}
           type="submit"
           className={classes.button}
           variant="contained"
