@@ -5,9 +5,12 @@ import PinIcon from "./PinIcon";
 import Context from "../context/context";
 import {
   CREATE_DRAFT,
+  GET_PINS,
   UPDATE_DRAFT_LOCATION
 } from "../actions-types/actions-types";
 import Blog from "./Blog";
+import { GET_PINS_QUERY } from "../graphql/queries";
+import { useClient } from "../hooks/useClient";
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
 // import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
@@ -19,13 +22,27 @@ const INITIAL_VIEWPORT = {
 };
 
 const Map = ({ classes }) => {
+  const client = useClient();
   const { state, dispatch } = useContext(Context);
+  useEffect(() => {
+    getPins();
+  }, []);
   const [viewport, setViewport] = useState(INITIAL_VIEWPORT);
   const [userPosition, setUserPosition] = useState(null);
 
   useEffect(() => {
     getUserPosition();
   }, []);
+
+  const getPins = async () => {
+    try {
+      const { getPins } = await client.request(GET_PINS_QUERY);
+      dispatch({ type: GET_PINS, payload: getPins });
+      console.log(getPins);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const setGeoData = ({ latitude, longitude }) => {
     setViewport({ ...viewport, latitude, longitude });
@@ -94,6 +111,19 @@ const Map = ({ classes }) => {
             <PinIcon color="hotpink" size={40} />
           </Marker>
         )}
+
+        {/*Created Pins*/}
+        {state.pins.map((pin) => (
+          <Marker
+            key={pin._id}
+            latitude={pin.latitude}
+            longitude={pin.longitude}
+            offsetLeft={-19}
+            offsetTop={-37}
+          >
+            <PinIcon color="darkblue" size={40} />
+          </Marker>
+        ))}
       </ReactMapGL>
       {/*Blog*/}
       <Blog />

@@ -17,7 +17,17 @@ const authenticated = (next) => (root, args, ctx, info) => {
 
 module.exports = {
   Query: {
-    me: authenticated((root, args, ctx, info) => ctx.currentUser)
+    me: authenticated((root, args, ctx, info) => ctx.currentUser),
+    getPins: async (root, args, ctx) => {
+      try {
+        const pins = await Pin.find({})
+          .populate("author")
+          .populate("comments.author");
+        return pins;
+      } catch (error) {
+        console.error(error);
+      }
+    }
   },
   Mutation: {
     createPin: authenticated(async (root, args, ctx) => {

@@ -8,13 +8,13 @@ import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
 import Context from "../../context/context";
-import { DELETE_DRAFT } from "../../actions-types/actions-types";
+import { CREATE_PIN, DELETE_DRAFT } from "../../actions-types/actions-types";
 import axios from "axios";
 import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 import { useClient } from "../../hooks/useClient";
 
 const CreatePin = ({ classes }) => {
-  const client = useClient()
+  const client = useClient();
   const { state, dispatch } = useContext(Context);
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
@@ -51,9 +51,6 @@ const CreatePin = ({ classes }) => {
       e.preventDefault();
       setSubmitting(true);
 
-
-
-
       const url = await handleImageUpload();
       const variables = {
         title,
@@ -69,7 +66,8 @@ const CreatePin = ({ classes }) => {
       );
 
       console.log("create Pin => ", createPin);
-      debugger;
+
+      dispatch({ type: CREATE_PIN, payload: createPin });
       handleDeleteDraft();
     } catch (error) {
       setSubmitting(false);
