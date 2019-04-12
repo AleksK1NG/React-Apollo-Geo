@@ -7,7 +7,7 @@ import { Paper } from '@material-ui/core';
 import PinContent from './Pin/PinContent';
 
 const Blog = ({ classes }) => {
-  const { state, dispatch } = useContext(Context);
+  const { state } = useContext(Context);
   let BlogContent;
   if (!state.draft && !state.currentPin) {
     // no content
