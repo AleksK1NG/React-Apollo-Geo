@@ -11,7 +11,7 @@ const Comments = ({ classes, comments }) => {
   return (
     <List className={classes.root}>
       {comments.map((comment, i) => (
-        <List key={i} alignItems="flex-start">
+        <List key={i} >
           <ListItemAvatar>
             <Avatar src={comment.author.picture} alt={comment.author.name} />
           </ListItemAvatar>

@@ -1,4 +1,5 @@
 import {
+  CREATE_COMMENT,
   CREATE_DRAFT,
   CREATE_PIN,
   DELETE_DRAFT,
@@ -44,6 +45,14 @@ export default function reducer(state, action) {
         ...state,
         pins: state.pins.filter((pin) => pin._id !== payload._id),
         currentPin: null
+      };
+    case CREATE_COMMENT:
+      return {
+        ...state,
+        pins: state.pins.map((pin) =>
+          pin._id === payload._id ? payload : pin
+        ),
+        currentPin: payload
       };
 
     default:
