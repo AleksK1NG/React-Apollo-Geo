@@ -1,5 +1,5 @@
-const { AuthenticationError } = require("apollo-server");
-const Pin = require("./models/Pin");
+const { AuthenticationError } = require('apollo-server');
+const Pin = require('./models/Pin');
 
 // const user = {
 //   _id: "1",
@@ -10,7 +10,7 @@ const Pin = require("./models/Pin");
 
 const authenticated = (next) => (root, args, ctx, info) => {
   if (!ctx.currentUser) {
-    throw new AuthenticationError("You must be logged in");
+    throw new AuthenticationError('You must be logged in');
   }
   return next(root, args, ctx, info);
 };
@@ -21,8 +21,8 @@ module.exports = {
     getPins: async (root, args, ctx) => {
       try {
         const pins = await Pin.find({})
-          .populate("author")
-          .populate("comments.author");
+          .populate('author')
+          .populate('comments.author');
         return pins;
       } catch (error) {
         console.error(error);
@@ -36,8 +36,19 @@ module.exports = {
           ...args.input,
           author: ctx.currentUser._id
         }).save();
-        const pinAdded = await Pin.populate(newPin, "author");
+        const pinAdded = await Pin.populate(newPin, 'author');
         return pinAdded;
+      } catch (error) {
+        console.error(error);
+      }
+    }),
+
+    deletePin: authenticated(async (root, args, ctx) => {
+      try {
+        const pinDeleted = await Pin.findOneAndDelete({
+          _id: args.pinId
+        }).exec();
+        return pinDeleted;
       } catch (error) {
         console.error(error);
       }

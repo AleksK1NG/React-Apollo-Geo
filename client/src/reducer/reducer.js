@@ -2,6 +2,7 @@ import {
   CREATE_DRAFT,
   CREATE_PIN,
   DELETE_DRAFT,
+  DELETE_PIN,
   GET_PINS,
   IS_LOGGED_IN,
   LOGIN_USER,
@@ -38,6 +39,12 @@ export default function reducer(state, action) {
       return { ...state, pins: [...prevPins, newPin] };
     case SET_PIN:
       return { ...state, currentPin: payload, draft: null };
+    case DELETE_PIN:
+      return {
+        ...state,
+        pins: state.pins.filter((pin) => pin._id !== payload._id),
+        currentPin: null
+      };
 
     default:
       return state;
