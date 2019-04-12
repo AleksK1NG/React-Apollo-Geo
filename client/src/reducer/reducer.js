@@ -5,9 +5,10 @@ import {
   GET_PINS,
   IS_LOGGED_IN,
   LOGIN_USER,
+  SET_PIN,
   SIGNOUT_USER,
   UPDATE_DRAFT_LOCATION
-} from "../actions-types/actions-types";
+} from '../actions-types/actions-types';
 
 export default function reducer(state, action) {
   const { type, payload } = action;
@@ -20,7 +21,11 @@ export default function reducer(state, action) {
     case SIGNOUT_USER:
       return { ...state, currentUser: null, isAuth: false };
     case CREATE_DRAFT:
-      return { ...state, draft: { latitude: 0, longitude: 0 } };
+      return {
+        ...state,
+        currentPin: null,
+        draft: { latitude: 0, longitude: 0 }
+      };
     case UPDATE_DRAFT_LOCATION:
       return { ...state, draft: payload };
     case DELETE_DRAFT:
@@ -31,6 +36,8 @@ export default function reducer(state, action) {
       const newPin = payload;
       const prevPins = state.pins.filter((pin) => pin._id !== newPin._id);
       return { ...state, pins: [...prevPins, newPin] };
+    case SET_PIN:
+      return { ...state, currentPin: payload, draft: null };
 
     default:
       return state;

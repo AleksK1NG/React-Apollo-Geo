@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useContext } from "react";
-import ReactMapGL, { NavigationControl, Marker } from "react-map-gl";
-import { withStyles } from "@material-ui/core/styles";
-import PinIcon from "./PinIcon";
-import Context from "../context/context";
+import React, { useState, useEffect, useContext } from 'react';
+import ReactMapGL, { NavigationControl, Marker, Popup } from 'react-map-gl';
+import { withStyles } from '@material-ui/core/styles';
+import PinIcon from './PinIcon';
+import Context from '../context/context';
 import {
   CREATE_DRAFT,
   GET_PINS,
+  SET_PIN,
   UPDATE_DRAFT_LOCATION
-} from "../actions-types/actions-types";
-import Blog from "./Blog";
-import { GET_PINS_QUERY } from "../graphql/queries";
-import { useClient } from "../hooks/useClient";
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
-// import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+} from '../actions-types/actions-types';
+import Blog from './Blog';
+import { GET_PINS_QUERY } from '../graphql/queries';
+import { useClient } from '../hooks/useClient';
+import differenceInMinutes from 'date-fns/difference_in_minutes';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/DeleteTwoTone';
 
 const INITIAL_VIEWPORT = {
   latitude: 55.755826,
@@ -29,6 +31,7 @@ const Map = ({ classes }) => {
   }, []);
   const [viewport, setViewport] = useState(INITIAL_VIEWPORT);
   const [userPosition, setUserPosition] = useState(null);
+  const [popup, setPopup] = useState(null);
 
   useEffect(() => {
     getUserPosition();
@@ -50,7 +53,7 @@ const Map = ({ classes }) => {
   };
 
   const getUserPosition = () => {
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         // setViewport({ ...viewport, latitude, longitude });
@@ -69,6 +72,20 @@ const Map = ({ classes }) => {
     const [longitude, latitude] = lngLat;
     dispatch({ type: UPDATE_DRAFT_LOCATION, payload: { longitude, latitude } });
   };
+
+  const highlightNewPin = (pin) => {
+    const isNewPin =
+      differenceInMinutes(Date.now(), Number(pin.createdAt)) <= 30;
+
+    return isNewPin ? 'limegreen' : 'darkblue';
+  };
+
+  const handleSelectPin = (pin) => {
+    setPopup(pin);
+    dispatch({ type: SET_PIN, payload: pin });
+  };
+
+  const isAuthUser = () => state.currentUser._id === popup.author._id;
 
   return (
     <div className={classes.root}>
@@ -121,9 +138,40 @@ const Map = ({ classes }) => {
             offsetLeft={-19}
             offsetTop={-37}
           >
-            <PinIcon color="darkblue" size={40} />
+            <PinIcon
+              onClick={() => handleSelectPin(pin)}
+              color={highlightNewPin(pin)}
+              size={40}
+            />
           </Marker>
         ))}
+
+        {/*Popup dialog*/}
+        {popup && (
+          <Popup
+            anchor="top"
+            latitude={popup.latitude}
+            longitude={popup.longitude}
+            closeOnClick={false}
+            onClose={() => setPopup(null)}
+          >
+            <img
+              src={popup.image}
+              alt={popup.title}
+              className={classes.popupImage}
+            />
+            <div className={popup.popupTab}>
+              <Typography>
+                {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
+              </Typography>
+              {isAuthUser() && (
+                <Button>
+                  <DeleteIcon className={classes.deleteIcon} />
+                </Button>
+              )}
+            </div>
+          </Popup>
+        )}
       </ReactMapGL>
       {/*Blog*/}
       <Blog />
@@ -133,32 +181,32 @@ const Map = ({ classes }) => {
 
 const styles = {
   root: {
-    display: "flex"
+    display: 'flex'
   },
   rootMobile: {
-    display: "flex",
-    flexDirection: "column-reverse"
+    display: 'flex',
+    flexDirection: 'column-reverse'
   },
   navigationControl: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
-    margin: "1em"
+    margin: '1em'
   },
   deleteIcon: {
-    color: "red"
+    color: 'red'
   },
   popupImage: {
-    padding: "0.4em",
+    padding: '0.4em',
     height: 200,
     width: 200,
-    objectFit: "cover"
+    objectFit: 'cover'
   },
   popupTab: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column"
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column'
   }
 };
 
