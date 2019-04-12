@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import FaceIcon from '@material-ui/icons/Face';
 import format from 'date-fns/format';
+import CreateComment from '../Comment/CreateComment';
+import Comments from '../Comment/Comments';
 
 const PinContent = ({ classes }) => {
   const {
@@ -38,6 +40,10 @@ const PinContent = ({ classes }) => {
         <AccessTimeIcon className={classes.icon} />
         {currentPin.content}
       </Typography>
+
+      {/*Pin Comments*/}
+      <CreateComment />
+      <Comments comments={currentPin.comments} />
     </div>
   );
 };
