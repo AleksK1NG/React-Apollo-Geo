@@ -8,10 +8,9 @@ import Divider from '@material-ui/core/Divider';
 import { useClient } from '../../hooks/useClient';
 import Context from '../../context/context';
 import { CREATE_COMMENT_MUTATION } from '../../graphql/mutations';
-import { CREATE_COMMENT } from '../../actions-types/actions-types';
 
 const CreateComment = ({ classes }) => {
-  const { state, dispatch } = useContext(Context);
+  const { state } = useContext(Context);
   const client = useClient();
   const [comment, setComment] = useState('');
 
@@ -20,11 +19,8 @@ const CreateComment = ({ classes }) => {
 
     try {
       const variables = { pinId: state.currentPin._id, text: comment };
-      const { createComment } = await client.request(
-        CREATE_COMMENT_MUTATION,
-        variables
-      );
-      dispatch({ type: CREATE_COMMENT, payload: createComment });
+      await client.request(CREATE_COMMENT_MUTATION, variables);
+
       setComment('');
     } catch (error) {
       console.error(error);

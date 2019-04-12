@@ -27,7 +27,7 @@ const Header = ({ classes }) => {
             <div className={classes.grow}>
               <img
                 src={currentUser.picture}
-                alt="Image"
+                alt={currentUser.name}
                 className={classes.picture}
               />
               <Typography variant="h5" color="inherit" noWrap>
