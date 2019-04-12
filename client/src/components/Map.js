@@ -26,6 +26,7 @@ import {
   PIN_DELETED_SUBSCRIPTION,
   PIN_UPDATED_SUBSCRIPTION
 } from '../graphql/subscriptions';
+import { unstable_useMediaQuery as useMediaQuery } from '@material-ui/core/useMediaQuery';
 
 const INITIAL_VIEWPORT = {
   latitude: 55.755826,
@@ -35,6 +36,7 @@ const INITIAL_VIEWPORT = {
 
 const Map = ({ classes }) => {
   const client = useClient();
+  const mobileSize = useMediaQuery('(max-width: 650px)');
   const { state, dispatch } = useContext(Context);
   useEffect(() => {
     getPins();
@@ -108,8 +110,9 @@ const Map = ({ classes }) => {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={mobileSize ? classes.rootMobile : classes.root}>
       <ReactMapGL
+        scrollZoom={!mobileSize}
         width="100vw"
         height="calc(100vh - 64px)"
         mapStyle="mapbox://styles/mapbox/streets-v9"
