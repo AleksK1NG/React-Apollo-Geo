@@ -30,6 +30,7 @@ const Login = ({ classes }) => {
 
   const onFailure = (error) => {
     console.error("Login error ", error);
+    dispatch({ type: IS_LOGGED_IN, payload: false });
   };
 
   return (
